@@ -75,6 +75,16 @@ async function checkTimeSlotAvailability(date, time) {
     }
 }
 
+// Function to show error message in time select
+function showTimeSelectError(message) {
+    timeSelect.innerHTML = `<option value="">${message}</option>`;
+    timeSelect.disabled = true;
+    setTimeout(() => {
+        timeSelect.innerHTML = '<option value="">Pilih Waktu</option>';
+        timeSelect.disabled = false;
+    }, 3000);
+}
+
 // Update available times based on selected date
 const dateInput = document.getElementById('date');
 dateInput.addEventListener('change', async () => {
@@ -87,24 +97,34 @@ dateInput.addEventListener('change', async () => {
     }
 
     try {
-        // Get available times for the selected date
-        const response = await fetch(`api/check-availability.php?date=${selectedDate}`);
+        const response = await fetch(`api/check-availability.php?date=${encodeURIComponent(selectedDate)}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const result = await response.json();
+        console.log('API Response:', result);
 
         if (result.success) {
             timeSelect.innerHTML = '<option value="">Pilih Waktu</option>';
-            result.available_times.forEach(time => {
-                const option = document.createElement('option');
-                option.value = time;
-                option.textContent = time;
-                timeSelect.appendChild(option);
-            });
+            
+            if (result.available_times && result.available_times.length > 0) {
+                result.available_times.forEach(time => {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    timeSelect.appendChild(option);
+                });
+            } else {
+                showTimeSelectError('Tidak ada slot tersedia');
+            }
         } else {
-            timeSelect.innerHTML = '<option value="">Tidak ada slot tersedia</option>';
+            showTimeSelectError(result.message || 'Gagal memuat waktu');
         }
     } catch (error) {
         console.error('Error:', error);
-        timeSelect.innerHTML = '<option value="">Error memuat waktu</option>';
+        showTimeSelectError('Error memuat waktu');
     }
 });
 
