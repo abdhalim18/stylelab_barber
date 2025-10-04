@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API</title>
+    <script>
+        async function testAPI() {
+            const date = document.getElementById('date').value;
+            if (!date) {
+                alert('Please enter a date');
+                return;
+            }
+
+            try {
+                const response = await fetch(`api/check-availability.php?date=${encodeURIComponent(date)}`);
+                const responseText = await response.text();
+                
+                // Tampilkan raw response
+                document.getElementById('raw-response').textContent = responseText;
+                
+                // Coba parse JSON
+                try {
+                    const jsonData = JSON.parse(responseText);
+                    document.getElementById('json-response').textContent = JSON.stringify(jsonData, null, 2);
+                } catch (e) {
+                    document.getElementById('json-response').textContent = 'Error parsing JSON: ' + e.message;
+                }
+                
+            } catch (error) {
+                document.getElementById('raw-response').textContent = 'Error: ' + error.message;
+                document.getElementById('json-response').textContent = '';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Test API Check Availability</h1>
+    <div>
+        <label for="date">Date (YYYY-MM-DD): </label>
+        <input type="date" id="date">
+        <button onclick="testAPI()">Test API</button>
+    </div>
+    
+    <h2>Raw Response:</h2>
+    <pre id="raw-response" style="background: #f0f0f0; padding: 10px; border: 1px solid #ccc;"></pre>
+    
+    <h2>Parsed JSON:</h2>
+    <pre id="json-response" style="background: #f0f0f0; padding: 10px; border: 1px solid #ccc;"></pre>
+</body>
+</html>

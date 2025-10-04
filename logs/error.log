@@ -1,0 +1,2 @@
+[2025-07-20 12:42:07] Request received - Date: 2025-07-21, Time: null
+[2025-07-20 12:42:07] Response: {"success":true,"available_times":["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30"],"message":"Berikut waktu yang tersedia untuk booking","date":"2025-07-21","total_available":16,"available_times_count":16}
